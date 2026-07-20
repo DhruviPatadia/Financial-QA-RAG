@@ -23,16 +23,11 @@ st.set_page_config(
 # Project Paths
 # ============================================
 
-PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
-
 # Hugging Face Model Repository
 MODEL_ID = "DP037/financial-qa-flan-t5-base"
 
-DATA_PATH = os.path.join(
-    PROJECT_PATH,
-    "deployment",
-    "data"
-)
+# Local data folder
+DATA_PATH = "data"
 
 # ============================================
 # Load Models (Cached)
