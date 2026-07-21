@@ -81,6 +81,12 @@ class FinancialGenerator:
             retrieved_docs
         )
 
+        print("=" * 80)
+        print("GENERATOR.PY IS RUNNING")
+        print("=" * 80)
+        print(prompt[:1000])   # Print only the first 1000 characters
+        print("=" * 80)
+
         print("\n========== PROMPT ==========\n")
         print(prompt)
         print("\n============================\n")
