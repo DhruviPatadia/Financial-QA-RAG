@@ -81,6 +81,10 @@ class FinancialGenerator:
             retrieved_docs
         )
 
+        print("\n========== PROMPT ==========\n")
+        print(prompt)
+        print("\n============================\n")
+
         inputs = self.tokenizer(
 
             prompt,
