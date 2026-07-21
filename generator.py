@@ -35,42 +35,42 @@ class FinancialGenerator:
 
     def build_prompt(self, question, retrieved_docs):
 
-        answers = []
+        evidence = ""
 
-        for doc in retrieved_docs:
+        for i, doc in enumerate(retrieved_docs, 1):
+            evidence += f"""
+    Document {i}
 
-            if "Answer:" in doc:
+    {doc}
 
-                answer = doc.split(
-                    "Answer:",
-                    1
-                )[1].strip()
-
-                answers.append(answer)
-
-        evidence = "\n\n".join(
-
-            [
-                f"Evidence {i+1}:\n{ans}"
-                for i, ans in enumerate(answers)
-            ]
-
-        )
+    """
 
         prompt = f"""
-You are an expert financial question answering assistant.
+    You are an expert financial question answering assistant.
 
-Use ONLY the evidence below to answer the user's question.
+    You must answer the user's question ONLY using the retrieved evidence below.
 
-Financial Evidence:
+    Instructions:
 
-{evidence}
+    - Read ALL retrieved documents carefully.
+    - Combine information from multiple documents whenever possible.
+    - Write a clear and concise answer in your own words.
+    - Do NOT copy entire sentences directly from the evidence.
+    - Do NOT use outside knowledge.
+    - Do NOT make up information.
+    - If the retrieved evidence does not contain enough information to answer the question, respond exactly with:
 
-Question:
-{question}
+    "I cannot answer this question based on the retrieved evidence."
 
-Answer:
-"""
+    Retrieved Evidence:
+
+    {evidence}
+
+    User Question:
+    {question}
+
+    Answer:
+    """
 
         return prompt
 
