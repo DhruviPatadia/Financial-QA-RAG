@@ -35,24 +35,13 @@ class FinancialGenerator:
 
     def build_prompt(self, question, retrieved_docs):
 
-        evidence = ""
-
-        for i, doc in enumerate(retrieved_docs, 1):
-
-            evidence += f"""
-    Document {i}
-
-    {doc}
-
-    """
+        context = "\n\n".join(retrieved_docs)
 
         prompt = f"""
     Context:
-
-    {evidence}
+    {context}
 
     Question:
-
     {question}
 
     Answer:
