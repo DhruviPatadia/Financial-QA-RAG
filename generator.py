@@ -38,6 +38,7 @@ class FinancialGenerator:
         evidence = ""
 
         for i, doc in enumerate(retrieved_docs, 1):
+
             evidence += f"""
     Document {i}
 
@@ -46,27 +47,12 @@ class FinancialGenerator:
     """
 
         prompt = f"""
-    You are an expert financial question answering assistant.
-
-    You must answer the user's question ONLY using the retrieved evidence below.
-
-    Instructions:
-
-    - Read ALL retrieved documents carefully.
-    - Combine information from multiple documents whenever possible.
-    - Write a clear and concise answer in your own words.
-    - Do NOT copy entire sentences directly from the evidence.
-    - Do NOT use outside knowledge.
-    - Do NOT make up information.
-    - If the retrieved evidence does not contain enough information to answer the question, respond exactly with:
-
-    "I cannot answer this question based on the retrieved evidence."
-
-    Retrieved Evidence:
+    Context:
 
     {evidence}
 
-    User Question:
+    Question:
+
     {question}
 
     Answer:
@@ -108,11 +94,11 @@ class FinancialGenerator:
             outputs = self.model.generate(
 
                 **inputs,
-
-                max_new_tokens=128,
-
+                max_new_tokens=150,
                 num_beams=4,
-
+                no_repeat_ngram_size=3,
+                repetition_penalty=1.2,
+                length_penalty=1.0,
                 early_stopping=True
 
             )
