@@ -35,9 +35,21 @@ class FinancialRetriever:
             top_k
         )
 
-        docs = [
-            self.documents[i]
-            for i in indices[0]
-        ]
+        docs = []
+
+        for i in indices[0]:
+
+            doc = self.documents[i]
+
+            # Keep the question and shorten the answer
+            if "Answer:" in doc:
+                question_part, answer_part = doc.split("Answer:", 1)
+
+                # Keep only the first ~150 words of the answer
+                shortened_answer = " ".join(answer_part.split()[:150])
+
+                doc = f"{question_part}Answer: {shortened_answer}"
+
+            docs.append(doc)
 
         return docs
