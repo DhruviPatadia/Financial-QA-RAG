@@ -1,21 +1,12 @@
 import torch
-
-from transformers import (
-    AutoTokenizer,
-    AutoModelForSeq2SeqLM
-)
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 
 class FinancialGenerator:
 
-    def __init__(
-        self,
-        model_id
-    ):
+    def __init__(self, model_name):
 
-        print(
-            "Loading fine-tuned FLAN-T5-Large model..."
-        )
+        print("Loading fine-tuned FLAN-T5-Large model...")
 
         self.device = (
             "cuda"
@@ -23,33 +14,19 @@ class FinancialGenerator:
             else "cpu"
         )
 
-        self.tokenizer = (
-            AutoTokenizer.from_pretrained(
-                model_id
-            )
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_name
         )
 
-        self.model = (
-            AutoModelForSeq2SeqLM.from_pretrained(
-                model_id
-            )
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(
+            model_name
         )
 
-        self.model.to(
-            self.device
-        )
-
+        self.model.to(self.device)
         self.model.eval()
 
-        print(
-            "Generator ready!"
-        )
-
-        print(
-            "Device:",
-            self.device
-        )
-
+        print("Generator ready!")
+        print(f"Device: {self.device}")
 
     def build_prompt(
         self,
@@ -57,23 +34,38 @@ class FinancialGenerator:
         retrieved_docs
     ):
 
+        # Extract document text from retriever results
+        documents = []
+
+        for item in retrieved_docs:
+
+            if isinstance(item, dict):
+
+                documents.append(
+                    item["document"]
+                )
+
+            else:
+
+                documents.append(
+                    str(item)
+                )
+
         context = "\n\n".join(
-            retrieved_docs
+            documents
         )
 
-        prompt = f"""Use the following financial information to answer the question.
-
-Financial Information:
-{context}
-
-Question:
-{question}
-
-Answer:
-"""
+        prompt = (
+            "Use the following financial information "
+            "to answer the question.\n\n"
+            "Financial Information:\n"
+            f"{context}\n\n"
+            "Question:\n"
+            f"{question}\n\n"
+            "Answer:"
+        )
 
         return prompt
-
 
     def generate(
         self,
@@ -91,9 +83,12 @@ Answer:
             return_tensors="pt",
             truncation=True,
             max_length=512
-        ).to(
-            self.device
         )
+
+        inputs = {
+            key: value.to(self.device)
+            for key, value in inputs.items()
+        }
 
         with torch.no_grad():
 
@@ -109,4 +104,4 @@ Answer:
             skip_special_tokens=True
         )
 
-        return answer
+        return answer.strip()
