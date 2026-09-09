@@ -28,44 +28,43 @@ class FinancialGenerator:
         print("Generator ready!")
         print(f"Device: {self.device}")
 
+
     def build_prompt(
         self,
         question,
         retrieved_docs
     ):
 
-        # Extract document text from retriever results
         documents = []
 
         for item in retrieved_docs:
 
             if isinstance(item, dict):
-
                 documents.append(
                     item["document"]
                 )
 
             else:
-
                 documents.append(
                     str(item)
                 )
 
-        context = "\n\n".join(
-            documents
-        )
+        context = "\n\n".join(documents)
 
         prompt = (
             "Use the following financial information "
             "to answer the question.\n\n"
             "Financial Information:\n"
-            f"{context}\n\n"
+            + context
+            + "\n\n"
             "Question:\n"
-            f"{question}\n\n"
+            + question
+            + "\n\n"
             "Answer:"
         )
 
         return prompt
+
 
     def generate(
         self,
