@@ -36,11 +36,7 @@ MODEL_ID = (
 )
 
 
-DATA_PATH = os.path.join(
-    PROJECT_PATH,
-    "deployment",
-    "data"
-)
+DATA_PATH = os.path.join(PROJECT_PATH, "data")
 
 
 # ============================================
