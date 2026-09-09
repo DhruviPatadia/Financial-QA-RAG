@@ -12,12 +12,13 @@ def display_retrieved_documents(
     if not documents:
 
         st.warning(
-            "No relevant financial evidence was retrieved."
+            "No relevant financial evidence "
+            "was retrieved."
         )
 
         return
 
-    for i, doc in enumerate(
+    for i, item in enumerate(
         documents,
         start=1
     ):
@@ -26,7 +27,26 @@ def display_retrieved_documents(
             f"Evidence {i}"
         ):
 
-            st.write(doc)
+            if isinstance(
+                item,
+                dict
+            ):
+
+                st.write(
+                    item.get(
+                        "document",
+                        ""
+                    )
+                )
+
+                st.caption(
+                    f"FAISS distance: "
+                    f"{item.get('distance', 'N/A'):.4f}"
+                )
+
+            else:
+
+                st.write(item)
 
 
 def display_answer(

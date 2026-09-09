@@ -8,7 +8,10 @@ from transformers import (
 
 class FinancialGenerator:
 
-    def __init__(self, model_id):
+    def __init__(
+        self,
+        model_id
+    ):
 
         print(
             "Loading fine-tuned FLAN-T5-Large model..."
@@ -58,7 +61,10 @@ class FinancialGenerator:
 
         for item in retrieved_docs:
 
-            if isinstance(item, dict):
+            if isinstance(
+                item,
+                dict
+            ):
 
                 documents.append(
                     item["document"]
@@ -107,7 +113,9 @@ Answer:
         )
 
         inputs = {
-            key: value.to(self.device)
+            key: value.to(
+                self.device
+            )
             for key, value in inputs.items()
         }
 

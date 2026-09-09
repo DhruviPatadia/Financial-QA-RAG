@@ -1,4 +1,5 @@
 import os
+
 import streamlit as st
 
 from retriever import FinancialRetriever
@@ -28,15 +29,18 @@ st.set_page_config(
 # Project Paths
 # ============================================
 
-PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
-
+PROJECT_PATH = os.path.dirname(
+    os.path.abspath(__file__)
+)
 
 MODEL_ID = (
     "DP037/financial-qa-flan-t5-large"
 )
 
-
-DATA_PATH = os.path.join(PROJECT_PATH, "data")
+DATA_PATH = os.path.join(
+    PROJECT_PATH,
+    "data"
+)
 
 
 # ============================================
@@ -60,9 +64,7 @@ def load_models():
     )
 
 
-retriever, generator = (
-    load_models()
-)
+retriever, generator = load_models()
 
 
 # ============================================
@@ -107,13 +109,11 @@ st.title(
     "💰 Financial Question Answering"
 )
 
-
 st.markdown(
 """
-This application answers financial
-questions using a fine-tuned
-**FLAN-T5-Large** model with
-**Retrieval-Augmented Generation (RAG)**.
+This application answers financial questions
+using a fine-tuned **FLAN-T5-Large** model
+with **Retrieval-Augmented Generation (RAG)**.
 """
 )
 
@@ -157,21 +157,28 @@ if st.button(
         )
 
 
-        with st.spinner(
-            "Generating answer..."
-        ):
+        if retrieved_docs:
 
-            answer = (
-                generator.generate(
-                    question,
-                    retrieved_docs
+            with st.spinner(
+                "Generating answer..."
+            ):
+
+                answer = (
+                    generator.generate(
+                        question,
+                        retrieved_docs
+                    )
                 )
+
+            display_answer(
+                answer
             )
 
+        else:
 
-        display_answer(
-            answer
-        )
+            st.warning(
+                "No financial evidence was retrieved."
+            )
 
 
 st.markdown("---")
