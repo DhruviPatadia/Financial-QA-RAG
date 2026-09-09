@@ -1,20 +1,50 @@
-
 import streamlit as st
 
 
-def display_retrieved_documents(documents):
+def display_retrieved_documents(
+    documents
+):
 
-    st.subheader("Retrieved Evidence")
+    st.subheader(
+        "Retrieved Evidence"
+    )
 
-    for i, doc in enumerate(documents, start=1):
+    if not documents:
 
-        with st.expander(f"Evidence {i}"):
+        st.warning(
+            "No relevant financial evidence was retrieved."
+        )
+
+        return
+
+    for i, doc in enumerate(
+        documents,
+        start=1
+    ):
+
+        with st.expander(
+            f"Evidence {i}"
+        ):
 
             st.write(doc)
 
 
-def display_answer(answer):
+def display_answer(
+    answer
+):
 
-    st.subheader("Generated Answer")
+    st.subheader(
+        "Generated Answer"
+    )
 
-    st.success(answer)
+    if answer.strip():
+
+        st.success(
+            answer
+        )
+
+    else:
+
+        st.warning(
+            "The model did not generate an answer."
+        )

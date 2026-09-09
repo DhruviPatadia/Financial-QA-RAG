@@ -1,4 +1,3 @@
-
 import torch
 
 from transformers import (
@@ -9,9 +8,14 @@ from transformers import (
 
 class FinancialGenerator:
 
-    def __init__(self, model_id):
+    def __init__(
+        self,
+        model_id
+    ):
 
-        print("Loading FLAN-T5 model...")
+        print(
+            "Loading fine-tuned FLAN-T5-Large model..."
+        )
 
         self.device = (
             "cuda"
@@ -19,37 +23,63 @@ class FinancialGenerator:
             else "cpu"
         )
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            model_id
+        self.tokenizer = (
+            AutoTokenizer.from_pretrained(
+                model_id
+            )
         )
 
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(
-            model_id
+        self.model = (
+            AutoModelForSeq2SeqLM.from_pretrained(
+                model_id
+            )
         )
 
-        self.model.to(self.device)
+        self.model.to(
+            self.device
+        )
 
         self.model.eval()
 
-        print("Generator ready!")
+        print(
+            "Generator ready!"
+        )
 
-    def build_prompt(self, question, retrieved_docs):
+        print(
+            "Device:",
+            self.device
+        )
 
-        context = "\n\n".join(retrieved_docs)
 
-        prompt = f"""
-    Context:
-    {context}
+    def build_prompt(
+        self,
+        question,
+        retrieved_docs
+    ):
 
-    Question:
-    {question}
+        context = "\n\n".join(
+            retrieved_docs
+        )
 
-    Answer:
-    """
+        prompt = f"""Use the following financial information to answer the question.
+
+Financial Information:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
 
         return prompt
 
-    def generate(self, question, retrieved_docs):
+
+    def generate(
+        self,
+        question,
+        retrieved_docs
+    ):
 
         prompt = self.build_prompt(
             question,
@@ -57,37 +87,26 @@ class FinancialGenerator:
         )
 
         inputs = self.tokenizer(
-
             prompt,
-
             return_tensors="pt",
-
             truncation=True,
-
             max_length=512
-
-        ).to(self.device)
+        ).to(
+            self.device
+        )
 
         with torch.no_grad():
 
             outputs = self.model.generate(
-
                 **inputs,
-                max_new_tokens=150,
+                max_new_tokens=64,
                 num_beams=4,
-                no_repeat_ngram_size=3,
-                repetition_penalty=1.2,
-                length_penalty=1.0,
                 early_stopping=True
-
             )
 
         answer = self.tokenizer.decode(
-
             outputs[0],
-
             skip_special_tokens=True
-
         )
 
         return answer
