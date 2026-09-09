@@ -3,7 +3,7 @@
 
 This project implements a financial question answering system using:
 
-- Fine-tuned FLAN-T5 Base
+- Fine-tuned FLAN-T5 Large
 - Sentence Transformers
 - FAISS Vector Search
 - Retrieval-Augmented Generation (RAG)
