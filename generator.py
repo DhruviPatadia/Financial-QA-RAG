@@ -67,7 +67,7 @@ class FinancialGenerator:
             ):
 
                 documents.append(
-                    item["document"]
+                    str(item["document"])
                 )
 
             else:
