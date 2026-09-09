@@ -1,5 +1,3 @@
-%%writefile /content/drive/MyDrive/Financial_QA_RAG_Project/deployment/generator.py
-
 import torch
 
 from transformers import (
