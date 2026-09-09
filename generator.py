@@ -1,12 +1,20 @@
+%%writefile /content/drive/MyDrive/Financial_QA_RAG_Project/deployment/generator.py
+
 import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSeq2SeqLM
+)
 
 
 class FinancialGenerator:
 
-    def __init__(self, model_name):
+    def __init__(self, model_id):
 
-        print("Loading fine-tuned FLAN-T5-Large model...")
+        print(
+            "Loading fine-tuned FLAN-T5-Large model..."
+        )
 
         self.device = (
             "cuda"
@@ -14,19 +22,32 @@ class FinancialGenerator:
             else "cpu"
         )
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            model_name
+        self.tokenizer = (
+            AutoTokenizer.from_pretrained(
+                model_id
+            )
         )
 
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(
-            model_name
+        self.model = (
+            AutoModelForSeq2SeqLM.from_pretrained(
+                model_id
+            )
         )
 
-        self.model.to(self.device)
+        self.model.to(
+            self.device
+        )
+
         self.model.eval()
 
-        print("Generator ready!")
-        print(f"Device: {self.device}")
+        print(
+            "Generator ready!"
+        )
+
+        print(
+            "Device:",
+            self.device
+        )
 
 
     def build_prompt(
@@ -40,28 +61,31 @@ class FinancialGenerator:
         for item in retrieved_docs:
 
             if isinstance(item, dict):
+
                 documents.append(
                     item["document"]
                 )
 
             else:
+
                 documents.append(
                     str(item)
                 )
 
-        context = "\n\n".join(documents)
-
-        prompt = (
-            "Use the following financial information "
-            "to answer the question.\n\n"
-            "Financial Information:\n"
-            + context
-            + "\n\n"
-            "Question:\n"
-            + question
-            + "\n\n"
-            "Answer:"
+        context = "\n\n".join(
+            documents
         )
+
+        prompt = f"""Use the following financial information to answer the question.
+
+Financial Information:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
 
         return prompt
 
