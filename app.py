@@ -28,9 +28,7 @@ st.set_page_config(
 # Project Paths
 # ============================================
 
-PROJECT_PATH = os.path.dirname(
-    os.path.dirname(__file__)
-)
+PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
 MODEL_ID = (
