@@ -1,55 +1,55 @@
-
+import os
 import faiss
 import pickle
 from sentence_transformers import SentenceTransformer
 
 
 class FinancialRetriever:
+    def __init__(self, data_path, top_k=1):
+        self.data_path = data_path
+        self.top_k = top_k
 
-    def __init__(self, data_path):
+        index_path = os.path.join(
+            data_path,
+            "finqa_tatqa_faiss_index.bin"
+        )
 
-        self.embedding_model = SentenceTransformer(
+        documents_path = os.path.join(
+            data_path,
+            "finqa_tatqa_documents.pkl"
+        )
+
+        self.encoder = SentenceTransformer(
             "sentence-transformers/all-MiniLM-L6-v2"
         )
 
-        self.index = faiss.read_index(
-            f"{data_path}/faiss_index.bin"
-        )
+        self.index = faiss.read_index(index_path)
 
-        with open(
-            f"{data_path}/documents.pkl",
-            "rb"
-        ) as f:
-
+        with open(documents_path, "rb") as f:
             self.documents = pickle.load(f)
 
-    def retrieve(self, question, top_k=3):
+    def retrieve(self, question, top_k=None):
+        k = top_k if top_k is not None else self.top_k
 
-        embedding = self.embedding_model.encode(
+        query_embedding = self.encoder.encode(
             [question],
             convert_to_numpy=True
         )
 
-        _, indices = self.index.search(
-            embedding,
-            top_k
+        distances, indices = self.index.search(
+            query_embedding,
+            k
         )
 
-        docs = []
+        results = []
 
-        for i in indices[0]:
+        for idx, distance in zip(indices[0], distances[0]):
+            if idx < 0 or idx >= len(self.documents):
+                continue
 
-            doc = self.documents[i]
+            results.append({
+                "document": self.documents[idx],
+                "distance": float(distance)
+            })
 
-            # Keep the question and shorten the answer
-            if "Answer:" in doc:
-                question_part, answer_part = doc.split("Answer:", 1)
-
-                # Keep only the first ~150 words of the answer
-                shortened_answer = " ".join(answer_part.split()[:150])
-
-                doc = f"{question_part}Answer: {shortened_answer}"
-
-            docs.append(doc)
-
-        return docs
+        return results
